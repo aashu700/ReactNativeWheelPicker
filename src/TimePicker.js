@@ -4,7 +4,7 @@
  * */
 
 import React from 'react'
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, Platform } from 'react-native'
 import WheelPicker from './WheelPicker'
 import {
   hourTo24Format,
@@ -14,6 +14,7 @@ import {
   getAmArray,
 } from './Utils'
 
+const isIos = Platform.OS === 'ios'
 const AM = 'AM'
 const HOUR = 60
 
@@ -69,16 +70,24 @@ export default class TimePicker extends React.Component<Props, State> {
 
     return (
       <View style={[styles.container, { backgroundColor: this.props.backgroundColor }]}>
-        <WheelPicker
-          isCyclic
-          style={styles.wheelPicker}
-          {...this.props}
-          data={hours}
-          onItemSelected={this.onHourSelected}
-          selectedItem={selectedHourIndex}
-          initPosition={selectedHourIndex}
-        />
-        <WheelPicker
+        {isIos ?
+          <WheelPicker
+            isCyclic
+            style={styles.wheelPicker}
+            {...this.props}
+            data={hours}
+            onItemSelected={this.onHourSelected}
+            selectedItem={selectedHourIndex}
+            initPosition={selectedHourIndex}
+          /> : <WheelPicker
+            isCyclic
+            style={styles.wheelPicker}
+            {...this.props}
+            data={hours}
+            onItemSelected={this.onHourSelected}
+            initPosition={selectedHourIndex}
+          />}
+        {isIos ? <WheelPicker
           style={styles.wheelPicker}
           isCyclic
           {...this.props}
@@ -86,7 +95,14 @@ export default class TimePicker extends React.Component<Props, State> {
           onItemSelected={this.onMinuteSelected}
           selectedItem={selectedMinuteIndex}
           initPosition={selectedMinuteIndex}
-        />
+        /> : <WheelPicker
+            style={styles.wheelPicker}
+            isCyclic
+            {...this.props}
+            data={minutes}
+            onItemSelected={this.onMinuteSelected}
+            initPosition={selectedMinuteIndex}
+          />}
         {!this.props.format24 && this.renderAm()}
       </View>
     )
@@ -96,14 +112,20 @@ export default class TimePicker extends React.Component<Props, State> {
     const { itemTextColor, selectedItemTextColor } = this.props
     const { selectedAmIndex } = this.state
     return (
-      <WheelPicker
+      isIos ? <WheelPicker
         style={styles.wheelPicker}
         {...this.props}
         data={getAmArray()}
         onItemSelected={this.onAmSelected}
         selectedItem={selectedAmIndex}
         initPosition={selectedAmIndex}
-      />
+      /> : <WheelPicker
+          style={styles.wheelPicker}
+          {...this.props}
+          data={getAmArray()}
+          onItemSelected={this.onAmSelected}
+          initPosition={selectedAmIndex}
+        />
     )
   }
 
